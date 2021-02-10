@@ -103,6 +103,7 @@
                         <outlet property="memeImage" destination="fBL-fy-5Pn" id="XL0-Qu-vKM"/>
                         <outlet property="shareButton" destination="PGD-PQ-psY" id="C5E-e0-HdY"/>
                         <outlet property="takeImageButton" destination="LHT-lA-Hau" id="bvp-xl-lhI"/>
+                        <outlet property="toolbar" destination="FVB-3t-t6N" id="6Da-Pr-kSW"/>
                         <outlet property="topText" destination="AjR-4A-lO2" id="9Nl-QF-U8H"/>
                     </connections>
                 </viewController>
