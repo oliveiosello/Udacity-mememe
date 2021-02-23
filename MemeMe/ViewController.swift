@@ -21,8 +21,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet weak var takeImageButton: UIBarButtonItem!
     @IBOutlet weak var topText: UITextField!
     @IBOutlet weak var bottomText: UITextField!
-    @IBOutlet weak var shareButton: UIButton!
+    @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var toolbar: UIToolbar!
+    @IBOutlet weak var cancelButton: UIButton!
+    
     
     let memeTextAttributes: [NSAttributedString.Key: Any] = [
         NSAttributedString.Key.strokeColor: UIColor.black,
@@ -30,17 +32,22 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         NSAttributedString.Key.foregroundColor: UIColor.white,
         NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-CondensedBlack", size: 50)!
     ]
+    
+    func createInitialView() {
+        topText.text = "TOP"
+        topText.defaultTextAttributes = memeTextAttributes
+        topText.textAlignment = .center
+        self.topText.delegate = self
+        bottomText.text = "BOTTOM"
+        bottomText.defaultTextAttributes = memeTextAttributes
+        bottomText.textAlignment = .center
+        memeImage.image = nil
+        self.bottomText.delegate = self
+    }
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        topText.text = "TOP"
-        topText.textAlignment = .center
-        topText.defaultTextAttributes = memeTextAttributes
-        self.topText.delegate = self
-        bottomText.text = "BOTTOM"
-        bottomText.textAlignment = .center
-        bottomText.defaultTextAttributes = memeTextAttributes
-        self.bottomText.delegate = self
+        createInitialView()
         shareButton.isEnabled = false
     }
     
@@ -68,6 +75,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @objc func keyboardWillHide(_ notification: Notification) {
         view.frame.origin.y = 0
+    }
+    
+    @IBAction func cancelMeme(_ sender: Any) {
+        print("CANCELLED")
+        createInitialView()
     }
     
     func getKeyboardHeight(_ notification: Notification) -> CGFloat {
@@ -105,23 +117,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             memeImage.image = image
             shareButton.isEnabled = true
         }
-        
         picker.dismiss(animated: true, completion: nil)
     }
     
     func generateMeme() -> UIImage {
         toolbar.isHidden = true
-        shareButton.isHidden = true
+        shareButton.isEnabled = true
         UIGraphicsBeginImageContext(self.view.frame.size)
         view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
         let memedImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         toolbar.isHidden = false
-        shareButton.isHidden = false
+        shareButton.isEnabled = false
         return memedImage
     }
 
-    
     @IBAction func shareAction(_sender: Any) {
         let meme = generateMeme()
         let shareMeme = UIActivityViewController(activityItems: [meme], applicationActivities: nil)
@@ -132,5 +142,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
         present(shareMeme, animated: true, completion: nil)
     }
+    
 }
 
