@@ -15,7 +15,7 @@ struct Meme {
     
 }
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class CreateMemeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
     @IBOutlet weak var memeImage: UIImageView!
     @IBOutlet weak var takeImageButton: UIBarButtonItem!
