@@ -7,13 +7,7 @@
 
 import UIKit
 
-struct Meme {
-    var topText: String
-    var bottomText: String
-    var originalImage: UIImage
-    var memedImage: UIImage
-    
-}
+
 
 class CreateMemeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
@@ -33,28 +27,29 @@ class CreateMemeViewController: UIViewController, UIImagePickerControllerDelegat
         NSAttributedString.Key.font: UIFont(name: "HelveticaNeue-CondensedBlack", size: 50)!
     ]
     
+    func setupTextFieldStyle(toTextField textField: UITextField, defaultText: String) {
+        textField.text = defaultText
+        textField.defaultTextAttributes = memeTextAttributes
+        textField.textAlignment = .center
+        textField.delegate = self
+    }
+    
     func createInitialView() {
-        topText.text = "TOP"
-        topText.defaultTextAttributes = memeTextAttributes
-        topText.textAlignment = .center
-        self.topText.delegate = self
-        bottomText.text = "BOTTOM"
-        bottomText.defaultTextAttributes = memeTextAttributes
-        bottomText.textAlignment = .center
+        setupTextFieldStyle(toTextField: topText, defaultText: "TOP")
+        setupTextFieldStyle(toTextField: bottomText, defaultText: "BOTTOM")
         memeImage.image = nil
-        self.bottomText.delegate = self
     }
         
     override func viewDidLoad() {
         super.viewDidLoad()
         createInitialView()
         shareButton.isEnabled = false
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        takeImageButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
-        super.viewWillAppear(animated)
-        subscribeToKeyboardNotifications()
+        
+        func viewWillAppear(_ animated: Bool) {
+            takeImageButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
+            super.viewWillAppear(animated)
+            subscribeToKeyboardNotifications()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -99,15 +94,16 @@ class CreateMemeViewController: UIViewController, UIImagePickerControllerDelegat
     }
     
     @IBAction func pickImageFromAlbum(_ sender: Any) {
-        let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .photoLibrary
-        imagePicker.delegate = self
-        present(imagePicker, animated: true, completion: nil)
+        openImagePicker(.photoLibrary)
     }
     
     @IBAction func pickImageFromCamera(_ sender: Any) {
+        openImagePicker(.camera)
+    }
+    
+    func openImagePicker(_ type: UIImagePickerController.SourceType){
         let imagePicker = UIImagePickerController()
-        imagePicker.sourceType = .camera
+        imagePicker.sourceType = type
         imagePicker.delegate = self
         present(imagePicker, animated: true, completion: nil)
     }
@@ -120,15 +116,18 @@ class CreateMemeViewController: UIViewController, UIImagePickerControllerDelegat
         picker.dismiss(animated: true, completion: nil)
     }
     
+    func hideToolbars(_ hide: Bool) {
+        toolbar.isHidden = hide
+        shareButton.isEnabled = hide
+    }
+    
     func generateMeme() -> UIImage {
-        toolbar.isHidden = true
-        shareButton.isEnabled = true
+        hideToolbars(true)
         UIGraphicsBeginImageContext(self.view.frame.size)
         view.drawHierarchy(in: self.view.frame, afterScreenUpdates: true)
         let memedImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
-        toolbar.isHidden = false
-        shareButton.isEnabled = false
+        hideToolbars(false)
         return memedImage
     }
 
